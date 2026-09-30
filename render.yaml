@@ -1,0 +1,23 @@
+# Render Blueprint for VARSHA Backend
+# Place this file in the root of your repository
+
+services:
+  # Backend API Service
+  - type: web
+    name: varsha-backend
+    env: python
+    region: oregon # Change to your preferred region
+    plan: starter # or 'free' for free tier (but has limitations)
+    branch: main
+    rootDir: backend
+    buildCommand: |
+      pip install -r requirements.txt
+      python run_pipeline.py || echo "Training skipped - using existing models"
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 8000
+    autoDeploy: true
