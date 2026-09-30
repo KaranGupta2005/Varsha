@@ -207,16 +207,36 @@ VITE_API_URL=https://varsha-backend.onrender.com
 
 **Important:** Replace `varsha-backend.onrender.com` with your actual Render backend URL!
 
-### API Proxy Configuration
+### API Proxy & SPA Configuration
 
-The `vercel.json` is configured to proxy API requests:
+The `frontend/vercel.json` is configured with schema validation, framework preset, SPA fallback, and API proxy:
 
 ```json
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
   "rewrites": [
     {
       "source": "/api/:path*",
       "destination": "https://varsha-backend.onrender.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }
